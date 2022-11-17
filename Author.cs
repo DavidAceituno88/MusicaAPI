@@ -1,9 +1,9 @@
-﻿namespace MusicAPI.Models
+namespace MusicAPI.Models
 {
     public class Author
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Song> Songs { get; set; }
+        public List<Song>? Songs { get; set; }
     }
 }
