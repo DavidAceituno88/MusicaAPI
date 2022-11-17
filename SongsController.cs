@@ -1,4 +1,4 @@
-﻿using System;
+g System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -83,16 +83,25 @@ namespace MusicAPI.Controllers
         // POST: api/Songs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Song>> PostSong(Song song)
+        public async Task<ActionResult<Song>> PostSong(int authorId, Song song)
         {
           if (_context.Songs == null)
           {
               return Problem("Entity set 'ApplicationDbContext.Songs'  is null.");
           }
+
+            var author = await _context.Authors.AnyAsync(authorDb => authorDb.Id == authorId);
+            
+            if (!author)
+            {
+                return NotFound("The Author doesn's exists");
+            }
+
+            song.AuthorId = authorId;
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetSong), new { id = song.Id }, song);
+            return Ok();
         }
 
         // DELETE: api/Songs/5
