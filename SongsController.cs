@@ -1,4 +1,4 @@
-g System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ namespace MusicAPI.Controllers
           {
               return NotFound();
           }
-            return await _context.Songs.ToListAsync();
+            return await _context.Songs.Include(songDb => songDb.Author).ToListAsync();
         }
 
         // GET: api/Songs/5
@@ -39,7 +39,7 @@ namespace MusicAPI.Controllers
           {
               return NotFound();
           }
-            var song = await _context.Songs.Include(songDb => songDb.Author).FirstOrDefaultAsync(x =>x.Id == id);
+            var song = await _context.Songs.Include(songDb => songDb.Author).FirstOrDefaultAsync(x =>x.SongId == id);
 
             if (song == null)
             {
@@ -54,7 +54,7 @@ namespace MusicAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSong(int id, Song song)
         {
-            if (id != song.Id)
+            if (id != song.SongId)
             {
                 return BadRequest();
             }
@@ -83,21 +83,21 @@ namespace MusicAPI.Controllers
         // POST: api/Songs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Song>> PostSong(int authorId, Song song)
+        public async Task<ActionResult<Song>> PostSong(Song song)
         {
           if (_context.Songs == null)
           {
               return Problem("Entity set 'ApplicationDbContext.Songs'  is null.");
           }
 
-            var author = await _context.Authors.AnyAsync(authorDb => authorDb.Id == authorId);
+            var authorExists = await _context.Authors.AnyAsync(authorDb => authorDb.AuthorId == song.AuthorId);
             
-            if (!author)
+            if (!authorExists)
             {
-                return NotFound("The Author doesn's exists");
+                return NotFound("The Author doesn't exists");
             }
 
-            song.AuthorId = authorId;
+            
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
 
@@ -126,7 +126,8 @@ namespace MusicAPI.Controllers
 
         private bool SongExists(int id)
         {
-            return (_context.Songs?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Songs?.Any(e => e.SongId == id)).GetValueOrDefault();
         }
     }
 }
+
