@@ -1,7 +1,8 @@
-sing System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace MusicAPI.Controllers
     public class AuthorsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper mapper;
 
-        public AuthorsController(ApplicationDbContext context)
+        public AuthorsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
         }
 
         // GET: api/Authors
@@ -28,7 +31,7 @@ namespace MusicAPI.Controllers
           {
               return NotFound();
           }
-            return await _context.Authors.ToListAsync();
+            return await _context.Authors.Include(authorDb => authorDb.Songs).ToListAsync();
         }
 
         // GET: api/Authors/5
@@ -39,7 +42,7 @@ namespace MusicAPI.Controllers
           {
               return NotFound();
           }
-            var author = await _context.Authors.Include(authorDb => authorDb.Songs).FirstOrDefaultAsync(x => x.Id == id);
+            var author = await _context.Authors.Include(authorDb => authorDb.Songs).FirstOrDefaultAsync(x => x.AuthorId == id);
 
             if (author == null)
             {
@@ -54,7 +57,7 @@ namespace MusicAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(int id, Author author)
         {
-            if (id != author.Id)
+            if (id != author.AuthorId)
             {
                 return BadRequest();
             }
@@ -83,15 +86,20 @@ namespace MusicAPI.Controllers
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor(Author author)
+        public async Task<ActionResult<AuthorCreationDTO>> PostAuthor(AuthorCreationDTO authorCreationDTO)
         {
-          if (_context.Authors == null)
+            //Here we validate to check that we do not add duplicates of the same entity
+            var exists = await _context.Authors.AnyAsync(x => x.Name == authorCreationDTO.Name);
+          
+            if (exists)
           {
-              return Problem("Entity set 'ApplicationDbContext.Author'  is null.");
+              return BadRequest($"An Author with the name: {authorCreationDTO.Name} already exists ");
           }
+            //Here we map the DTO to the original Entity
+            var author = mapper.Map<Author>(authorCreationDTO);
+            
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
-
             return Ok();
         }
 
@@ -117,7 +125,7 @@ namespace MusicAPI.Controllers
 
         private bool AuthorExists(int id)
         {
-            return (_context.Authors?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Authors?.Any(e => e.AuthorId == id)).GetValueOrDefault();
         }
     }
 }
