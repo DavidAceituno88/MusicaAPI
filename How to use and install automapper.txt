@@ -1,0 +1,15 @@
+how to use and configure Automapper
+
+Download Automapper
+	Automapper.Extensions.Microsoft.DependencyInjection
+
+Configure:
+	services.AddAutoMapper(typeof(Program));
+
+Create Automapper Class
+	Create Folder "Utilities"
+		Create the Mappers
+
+Inject the mapper in the controllers
+	
+MAP THE DTO TO THE ORIGINAL ENTITY
