@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace MusicAPI.Controllers
     public class SongsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper mapper;
 
-        public SongsController(ApplicationDbContext context)
+        public SongsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
         }
 
         // GET: api/Songs
@@ -83,21 +86,23 @@ namespace MusicAPI.Controllers
         // POST: api/Songs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Song>> PostSong(Song song)
+        public async Task<ActionResult<SongCreationDTO>> PostSong(SongCreationDTO songCreationDTO)
         {
           if (_context.Songs == null)
           {
               return Problem("Entity set 'ApplicationDbContext.Songs'  is null.");
           }
 
-            var authorExists = await _context.Authors.AnyAsync(authorDb => authorDb.AuthorId == song.AuthorId);
+            var authorExists = await _context.Authors.AnyAsync(authorDb => authorDb.AuthorId == songCreationDTO.AuthorId);
             
             if (!authorExists)
             {
                 return NotFound("The Author doesn't exists");
             }
-
             
+            //Here we map the DTO to the original Entity
+            var song = mapper.Map<Song>(songCreationDTO);
+
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
 
