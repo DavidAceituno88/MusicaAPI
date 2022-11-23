@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using MusicAPI.Models;
 using System.Text.Json.Serialization;
 
@@ -14,6 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//Configure Automapper 
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
