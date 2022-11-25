@@ -32,13 +32,13 @@ namespace MusicAPI.Controllers
               return NotFound();
           }
 
-            var author = await _context.Authors.ToListAsync();
+            var author = await _context.Authors.Include(x => x.Songs).ToListAsync();
             return mapper.Map<List<AuthorDTO>>(author);
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<AuthorDTO>> GetAuthor(int id)
         {
           if (_context.Authors == null)
           {
@@ -51,7 +51,7 @@ namespace MusicAPI.Controllers
                 return NotFound();
             }
 
-            return author;
+            return mapper.Map<AuthorDTO>(author);
         }
 
         // PUT: api/Authors/5
@@ -131,3 +131,4 @@ namespace MusicAPI.Controllers
         }
     }
 }
+
