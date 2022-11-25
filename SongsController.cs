@@ -1,4 +1,4 @@
-using System;
+g System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -99,9 +99,9 @@ namespace MusicAPI.Controllers
           {
               return Problem("Entity set 'ApplicationDbContext.Songs'  is null.");
           }
-
-            var authorExists = await _context.Authors.AnyAsync(authorDb => authorDb.AuthorId == songCreationDTO.AuthorId);
             
+            var authorExists = await _context.Authors.AnyAsync(authorDb => authorDb.AuthorId == songCreationDTO.AuthorId);
+           
             if (!authorExists)
             {
                 return NotFound("The Author doesn't exists");
