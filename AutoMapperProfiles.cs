@@ -9,6 +9,9 @@ namespace MusicAPI.Utilities
         {
             CreateMap<AuthorCreationDTO, Author>();
             CreateMap<SongCreationDTO, Song>();
+            CreateMap<Author, AuthorDTO>();
+            CreateMap<Song, SongDTO>(); 
+            CreateMap<Song, SongOnlyDTO>(); 
         }
     }
 }
