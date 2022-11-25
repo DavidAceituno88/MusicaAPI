@@ -25,13 +25,15 @@ namespace MusicAPI.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthor()
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthor()
         {
           if (_context.Authors == null)
           {
               return NotFound();
           }
-            return await _context.Authors.Include(authorDb => authorDb.Songs).ToListAsync();
+
+            var author = await _context.Authors.ToListAsync();
+            return mapper.Map<List<AuthorDTO>>(author);
         }
 
         // GET: api/Authors/5
