@@ -25,30 +25,37 @@ namespace MusicAPI.Controllers
 
         // GET: api/Songs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Song>>> GetSongs()
+        public async Task<ActionResult<IEnumerable<SongDTO>>> GetSongs()
         {
           if (_context.Songs == null)
           {
               return NotFound();
-          }
-            return await _context.Songs.Include(songDb => songDb.Author).ToListAsync();
+            }
+
+            var song = await _context.Songs.ToListAsync();
+            return mapper.Map<List<SongDTO>>(song);
         }
 
         // GET: api/Songs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Song>> GetSong(int id)
+        public async Task<ActionResult<SongDTO>> GetSong(int id)
         {
           if (_context.Songs == null)
           {
               return NotFound();
           }
-            var song = await _context.Songs.Include(songDb => songDb.Author).FirstOrDefaultAsync(x =>x.SongId == id);
 
-            if (song == null)
+          //I included the author so that later we can get the name of the author
+            var songExist = await _context.Songs.Include(x => x.Author).FirstOrDefaultAsync(x =>x.SongId == id);
+
+            if (songExist == null)
             {
                 return NotFound();
             }
 
+            var song = mapper.Map<SongDTO>(songExist);
+            //Assign the name of the autor included in the songExist query 
+            song.AuthorName = songExist.Author.Name;
             return song;
         }
 
