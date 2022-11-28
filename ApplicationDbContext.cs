@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MusicAPI.Models;
 
 namespace MusicAPI.Models
@@ -13,6 +13,11 @@ namespace MusicAPI.Models
         public DbSet<Song> Songs { get; set; } 
 
         public DbSet<Author> Authors { get; set; } 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Seed();
+        }
 
     }
 
