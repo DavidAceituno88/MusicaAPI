@@ -22,6 +22,22 @@ namespace MusicAPI.Controllers
             _context = context;
             this.mapper = mapper;
         }
+        //Basic Data Seeder... 
+        [HttpGet("Seed")]
+        public async Task<ActionResult> Seed()
+        {
+            if(!_context.Authors.Any())
+            {
+                List<Author> authors = new List<Author>
+                {
+                    new Author {AuthorId= 1, Name ="Jose"},
+                    new Author {AuthorId= 2, Name ="David"}
+                };
+                _context.Authors.AddRange(authors);
+                _context.SaveChanges();
+            }
+            return Ok();
+        }
 
         // GET: api/Authors
         [HttpGet]
@@ -131,4 +147,5 @@ namespace MusicAPI.Controllers
         }
     }
 }
+
 
