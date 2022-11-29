@@ -1,4 +1,4 @@
-using System;
+ystem;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,8 +30,30 @@ namespace MusicAPI.Controllers
             {
                 List<Author> authors = new List<Author>
                 {
-                    new Author {AuthorId= 1, Name ="Jose"},
-                    new Author {AuthorId= 2, Name ="David"}
+                    new Author 
+                    {
+                        AuthorId= 1, 
+                        Name ="Jose", 
+                            Songs = new List<Song>()
+                            { 
+                            
+                            new Song  {  SongId = 1, Name = "Song 1", AuthorId = 1 },
+                            new Song  {  SongId = 2, Name = "Song 2", AuthorId = 1 }
+
+                            } 
+                    },
+                    new Author 
+                    {
+                        AuthorId= 2,
+                        Name ="David",
+                            Songs = new List<Song>()
+                            {
+
+                            new Song  {  SongId = 3, Name = "Song 3", AuthorId = 2 },
+                            new Song  {  SongId = 4, Name = "Song 4", AuthorId = 2 }
+
+                            }
+                    }
                 };
                 _context.Authors.AddRange(authors);
                 _context.SaveChanges();
@@ -147,5 +169,6 @@ namespace MusicAPI.Controllers
         }
     }
 }
+
 
 
