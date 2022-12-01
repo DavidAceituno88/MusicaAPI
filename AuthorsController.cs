@@ -1,4 +1,4 @@
-ing System;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,8 +57,10 @@ namespace MusicAPI.Controllers
                 };
                 _context.Authors.AddRange(authors);
                 _context.SaveChanges();
+                return Ok(authors);
             }
-            return Ok();
+            return BadRequest("The Author table is not empty");
+
         }
 
         // GET: api/Authors
@@ -147,7 +149,6 @@ namespace MusicAPI.Controllers
         public async Task<ActionResult<List<AuthorCreationDTO>>> SuperPostAuthor(List<AuthorCreationDTO> authors)
         {
             
-
             var authorList = mapper.Map<List<Author>>(authors);
             _context.Authors.AddRange(authorList);
             _context.SaveChanges();
@@ -181,6 +182,3 @@ namespace MusicAPI.Controllers
         }
     }
 }
-
-
-
