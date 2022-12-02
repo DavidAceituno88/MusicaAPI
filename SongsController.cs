@@ -1,4 +1,4 @@
-g System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,7 +101,14 @@ namespace MusicAPI.Controllers
           }
             
             var authorExists = await _context.Authors.AnyAsync(authorDb => authorDb.AuthorId == songCreationDTO.AuthorId);
-           
+            
+            // Verify for Son names duplicates on the same author.
+            var songsExists = await _context.Songs.AnyAsync(s => s.AuthorId == songCreationDTO.AuthorId && s.Name == songCreationDTO.Name);
+            
+            if(songsExists)
+            {
+                return BadRequest($"The song: {songCreationDTO.Name} already exist for the author with id: {songCreationDTO.AuthorId} ");
+            }
             if (!authorExists)
             {
                 return NotFound("The Author doesn't exists");
@@ -142,4 +149,3 @@ namespace MusicAPI.Controllers
         }
     }
 }
-
